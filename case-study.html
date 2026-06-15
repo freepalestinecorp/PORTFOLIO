@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Study</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        .case-study-hero {
+            padding: 150px 5vw 50px;
+            text-align: center;
+        }
+        .cs-title {
+            font-size: 5rem;
+            font-family: var(--font-display);
+            line-height: 1;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .cs-tags {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .cs-hero-img {
+            width: 100%;
+            max-width: 1000px;
+            height: auto;
+            border-radius: 30px;
+            margin: 0 auto;
+            display: block;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .cs-body {
+            max-width: 800px;
+            margin: 50px auto 100px;
+            padding: 0 5vw;
+            color: #d1d5db;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .cs-body h1, .cs-body h2, .cs-body h3 {
+            color: #fff;
+            font-family: var(--font-body);
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .cs-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .cs-body a {
+            color: #38bdf8;
+            text-decoration: underline;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            transition: background 0.3s;
+        }
+        .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body class="case-study-page">
+    <!-- Diagonal Veil Intro -->
+    <div class="veil-overlay" id="veilOverlay">
+        <div class="veil-triangle veil-top"></div>
+        <div class="veil-triangle veil-bottom"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav gs-reveal" style="position: fixed; bottom: 40px; z-index: 100;">
+        <a href="index.html" class="nav-item">
+            <i class="ph ph-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="aboutus.html" class="nav-item">
+            <i class="ph ph-users"></i>
+            <span>About us</span>
+        </a>
+        <a href="portfolio.html" class="nav-item">
+            <i class="ph ph-briefcase"></i>
+            <span>Portfolio</span>
+        </a>
+        <a href="index.html#contact" class="nav-item">
+            <i class="ph ph-envelope"></i>
+            <span>Contacts</span>
+        </a>
+    </nav>
+
+    <main class="case-study-content" id="cs-container" style="display: none;">
+        <section class="case-study-hero">
+            <a href="portfolio.html" class="back-btn"><i class="ph-bold ph-arrow-left"></i> Back to Portfolio</a>
+            <h1 class="cs-title" id="cs-title">Loading...</h1>
+            <div class="cs-tags" id="cs-tags"></div>
+            <img src="" id="cs-hero-img" class="cs-hero-img" alt="">
+        </section>
+
+        <section class="cs-body" id="cs-body">
+            <!-- Dynamic HTML content injected here -->
+        </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="portfolio_data.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Case Study Loader Logic
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetSlug = urlParams.get('id');
+            
+            if (!targetSlug) {
+                window.location.href = 'portfolio.html';
+                return;
+            }
+
+            try {
+                const projects = window.PORTFOLIO_DATA || [];
+                
+                // Find matching project
+                const project = projects.find(p => {
+                    const slug = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                    return slug === targetSlug;
+                });
+
+                if (!project) {
+                    window.location.href = 'portfolio.html';
+                    return;
+                }
+
+                document.getElementById('cs-title').textContent = project.title;
+                document.title = project.title + " - Case Study";
+                
+                document.getElementById('cs-hero-img').src = project.img;
+                
+                const tagsContainer = document.getElementById('cs-tags');
+                project.categories.forEach(c => {
+                    tagsContainer.innerHTML += `<span class="project-tag" style="color:#a0a0a0; font-size:0.9rem; border:1px solid rgba(255,255,255,0.2); padding:5px 12px; border-radius:20px;">${c}</span>`;
+                });
+
+                document.getElementById('cs-body').innerHTML = project.body;
+                document.getElementById('cs-container').style.display = 'block';
+
+            } catch(e) {
+                console.error(e);
+            }
+        });
+    </script>
+</body>
+</html>
